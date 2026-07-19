@@ -15,7 +15,6 @@ from database import (
 )
 
 router = Router()
-print("✅ ADMIN ROUTER ZAŁADOWANY")
 
 ADMINS = [
     7470778133
@@ -23,15 +22,14 @@ ADMINS = [
 
 
 # ===========================
-# /panel
+# PANEL ADMINISTRATORA
 # ===========================
 
 @router.message(Command("panel"))
 async def panel(message: Message):
 
-    print("PANEL URUCHOMIONY")
-
-    await message.answer("Panel działa!")
+    if message.from_user.id not in ADMINS:
+        await message.answer("❌ Nie masz dostępu do panelu administratora.")
         return
 
     total = get_total_users()
@@ -42,7 +40,8 @@ async def panel(message: Message):
         f"🛡 <b>Guardian Panel</b>\n\n"
         f"👥 Użytkowników: <b>{total}</b>\n"
         f"✅ Zweryfikowanych: <b>{verified}</b>\n"
-        f"📜 Regulamin zaakceptowało: <b>{rules}</b>",
+        f"📜 Zaakceptowało regulamin: <b>{rules}</b>\n\n"
+        f"Wybierz opcję poniżej:",
         parse_mode="HTML",
         reply_markup=admin_keyboard
     )
@@ -53,7 +52,11 @@ async def panel(message: Message):
 # ===========================
 
 @router.callback_query(F.data == "admin_stats")
-async def stats(callback: CallbackQuery):
+async def admin_stats(callback: CallbackQuery):
+
+    if callback.from_user.id not in ADMINS:
+        await callback.answer("Brak dostępu.", show_alert=True)
+        return
 
     total = get_total_users()
     verified = get_verified_users()
@@ -63,10 +66,12 @@ async def stats(callback: CallbackQuery):
         f"📊 <b>Statystyki</b>\n\n"
         f"👥 Użytkowników: <b>{total}</b>\n"
         f"✅ Zweryfikowanych: <b>{verified}</b>\n"
-        f"📜 Regulamin zaakceptowało: <b>{rules}</b>",
+        f"📜 Zaakceptowało regulamin: <b>{rules}</b>",
         parse_mode="HTML",
         reply_markup=admin_keyboard
     )
+
+    await callback.answer()
 
 
 # ===========================
@@ -74,26 +79,24 @@ async def stats(callback: CallbackQuery):
 # ===========================
 
 @router.callback_query(F.data == "admin_users")
-async def users(callback: CallbackQuery):
+async def admin_users(callback: CallbackQuery):
+
+    if callback.from_user.id not in ADMINS:
+        await callback.answer("Brak dostępu.", show_alert=True)
+        return
 
     users = get_all_users()
 
     if not users:
-
-        text = "Brak użytkowników."
-
+        text = "👥 Brak użytkowników w bazie."
     else:
-
         text = "👥 <b>Lista użytkowników</b>\n\n"
 
-        for user in users:
-
-            uid, verified, rules = user
-
+        for user_id, verified, accepted in users:
             text += (
-                f"🆔 <code>{uid}</code>\n"
-                f"✅ {'TAK' if verified else 'NIE'}\n"
-                f"📜 {'TAK' if rules else 'NIE'}\n\n"
+                f"🆔 <code>{user_id}</code>\n"
+                f"✅ Zweryfikowany: {'TAK' if verified else 'NIE'}\n"
+                f"📜 Regulamin: {'TAK' if accepted else 'NIE'}\n\n"
             )
 
     await callback.message.edit_text(
@@ -102,15 +105,25 @@ async def users(callback: CallbackQuery):
         reply_markup=admin_keyboard
     )
 
+    await callback.answer()
+
 
 # ===========================
 # OGŁOSZENIA
 # ===========================
 
 @router.callback_query(F.data == "admin_broadcast")
-async def broadcast(callback: CallbackQuery):
+async def admin_broadcast(callback: CallbackQuery):
+
+    if callback.from_user.id not in ADMINS:
+        await callback.answer("Brak dostępu.", show_alert=True)
+        return
 
     await callback.message.edit_text(
-        "📢 Funkcja ogłoszeń pojawi się w następnym etapie.",
+        "📢 <b>Ogłoszenia</b>\n\n"
+        "🚧 Ta funkcja jest jeszcze w budowie.",
+        parse_mode="HTML",
         reply_markup=admin_keyboard
     )
+
+    await callback.answer()
