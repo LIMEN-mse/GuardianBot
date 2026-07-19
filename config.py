@@ -1,7 +1,4 @@
-import os
+TOKEN = "8866573034:AAFRujkp1wr8i_aEu5-w6Mu_KTKeEGd2JiI"
 
-TOKEN = os.getenv("BOT_TOKEN")
-
-VERIFY_TIME = 300  # 5 minut
-
+VERIFY_TIME = 300
 LOG_CHAT = None

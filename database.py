@@ -8,29 +8,55 @@ def create_tables():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users(
         user_id INTEGER PRIMARY KEY,
-        username TEXT,
-        first_name TEXT,
-        verified INTEGER DEFAULT 0
+        verified INTEGER DEFAULT 0,
+        accepted_rules INTEGER DEFAULT 0
     )
     """)
 
     db.commit()
 
 
-def add_user(user_id, username, first_name):
-    cursor.execute("""
-    INSERT OR IGNORE INTO users(user_id, username, first_name)
-    VALUES (?, ?, ?)
-    """, (user_id, username, first_name))
-
+def add_user(user_id):
+    cursor.execute(
+        "INSERT OR IGNORE INTO users(user_id) VALUES(?)",
+        (user_id,)
+    )
     db.commit()
 
 
 def verify_user(user_id):
-    cursor.execute("""
-    UPDATE users
-    SET verified = 1
-    WHERE user_id = ?
-    """, (user_id,))
-
+    cursor.execute(
+        "UPDATE users SET verified=1 WHERE user_id=?",
+        (user_id,)
+    )
     db.commit()
+
+
+def accept_rules(user_id):
+    cursor.execute(
+        "UPDATE users SET accepted_rules=1 WHERE user_id=?",
+        (user_id,)
+    )
+    db.commit()
+
+
+def is_verified(user_id):
+    cursor.execute(
+        "SELECT verified FROM users WHERE user_id=?",
+        (user_id,)
+    )
+
+    row = cursor.fetchone()
+
+    return bool(row and row[0])
+
+
+def rules_accepted(user_id):
+    cursor.execute(
+        "SELECT accepted_rules FROM users WHERE user_id=?",
+        (user_id,)
+    )
+
+    row = cursor.fetchone()
+
+    return bool(row and row[0])
