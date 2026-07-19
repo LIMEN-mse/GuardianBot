@@ -10,8 +10,8 @@ from database import create_tables
 bot = Bot(TOKEN)
 dp = Dispatcher()
 
-dp.include_router(router)
 dp.include_router(orders_router)
+dp.include_router(router)
 dp.include_router(admin_router)
 
 async def main():
