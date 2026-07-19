@@ -1,9 +1,6 @@
 from aiogram import Router, F
 from aiogram.filters import Command
-from aiogram.types import (
-    Message,
-    CallbackQuery
-)
+from aiogram.types import Message, CallbackQuery
 
 from keyboards import admin_keyboard
 
@@ -27,9 +24,10 @@ ADMINS = [
 
 @router.message(Command("panel"))
 async def panel(message: Message):
+    print(">>> PANEL WYKRYTY <<<")
 
     if message.from_user.id not in ADMINS:
-        await message.answer("❌ Nie masz dostępu do panelu administratora.")
+        await message.answer("❌ Nie masz dostępu.")
         return
 
     total = get_total_users()
@@ -40,8 +38,7 @@ async def panel(message: Message):
         f"🛡 <b>Guardian Panel</b>\n\n"
         f"👥 Użytkowników: <b>{total}</b>\n"
         f"✅ Zweryfikowanych: <b>{verified}</b>\n"
-        f"📜 Zaakceptowało regulamin: <b>{rules}</b>\n\n"
-        f"Wybierz opcję poniżej:",
+        f"📜 Zaakceptowało regulamin: <b>{rules}</b>",
         parse_mode="HTML",
         reply_markup=admin_keyboard
     )
@@ -88,7 +85,7 @@ async def admin_users(callback: CallbackQuery):
     users = get_all_users()
 
     if not users:
-        text = "👥 Brak użytkowników w bazie."
+        text = "👥 Brak użytkowników."
     else:
         text = "👥 <b>Lista użytkowników</b>\n\n"
 
@@ -120,9 +117,7 @@ async def admin_broadcast(callback: CallbackQuery):
         return
 
     await callback.message.edit_text(
-        "📢 <b>Ogłoszenia</b>\n\n"
-        "🚧 Ta funkcja jest jeszcze w budowie.",
-        parse_mode="HTML",
+        "📢 Funkcja ogłoszeń pojawi się w kolejnej aktualizacji.",
         reply_markup=admin_keyboard
     )
 
