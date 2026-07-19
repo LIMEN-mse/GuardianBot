@@ -1,0 +1,5 @@
+TOKEN = "8866573034:AAEg_h6q4kDMTGSr7uOeMSgPWCrR-lfar4c"
+
+VERIFY_TIME = 300  # 5 minut
+
+LOG_CHAT = None
