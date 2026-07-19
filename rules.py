@@ -5,11 +5,9 @@ RULES = """
 
 2. Nie obrażaj innych.
 
-3. Zakaz reklam.
+3. Nie otwieraj cudzych zamówień.
 
-4. Zakaz treści NSFW.
-
-5. Szanuj administrację.
+4. Aby coś zamówić napisz /zamow na Orders.
 
 Kliknij przycisk poniżej, aby zaakceptować regulamin.
 """
