@@ -71,3 +71,11 @@ admin_keyboard = InlineKeyboardMarkup(
         ]
     ]
 )
+
+
+def get_all_users():
+    cursor.execute(
+        "SELECT user_id, verified, accepted_rules FROM users"
+    )
+
+    return cursor.fetchall()

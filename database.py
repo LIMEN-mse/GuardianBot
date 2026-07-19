@@ -81,3 +81,10 @@ def get_rules_users():
         "SELECT COUNT(*) FROM users WHERE accepted_rules=1"
     )
     return cursor.fetchone()[0]
+
+
+def get_all_users():
+    cursor.execute(
+        "SELECT user_id, verified, accepted_rules FROM users"
+    )
+    return cursor.fetchall()

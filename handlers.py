@@ -30,7 +30,7 @@ router = Router()
 
 # <<< TU WPISZ SWOJE ID TELEGRAMA >>>
 ADMINS = [
-    123456789
+    7470778133
 ]
 
 
@@ -56,30 +56,6 @@ async def my_id(message: Message):
     await message.answer(
         f"🆔 Twoje ID:\n\n<code>{message.from_user.id}</code>",
         parse_mode="HTML"
-    )
-
-
-# ===========================
-# PANEL ADMINA
-# ===========================
-
-@router.message(Command("panel"))
-async def panel(message: Message):
-
-    if message.from_user.id not in ADMINS:
-        return
-
-    total = get_total_users()
-    verified = get_verified_users()
-    rules = get_rules_users()
-
-    await message.answer(
-        f"🛡 <b>Guardian Panel</b>\n\n"
-        f"👥 Użytkowników: <b>{total}</b>\n"
-        f"✅ Zweryfikowanych: <b>{verified}</b>\n"
-        f"📜 Zaakceptowało regulamin: <b>{rules}</b>",
-        parse_mode="HTML",
-        reply_markup=admin_keyboard
     )
 
 
