@@ -1,17 +1,13 @@
-from aiogram.types import CallbackQuery
-
 from datetime import datetime, timedelta, timezone
 
 from aiogram import Bot
 from aiogram.types import (
+    CallbackQuery,
     InlineKeyboardMarkup,
     InlineKeyboardButton
 )
 
 from config import GROUP_ID, INVITE_LINK_DURATION
-from config import GROUP_ID
-from aiogram import Bot
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from questions import QUESTIONS
 from rules import RULES
 from keyboards import (
@@ -23,7 +19,6 @@ from database import (
     verify_user,
     accept_rules
 )
-
 
 # Zapamiętuje, na którym pytaniu jest użytkownik
 user_progress = {}
@@ -86,23 +81,20 @@ async def process_answer(callback: CallbackQuery):
     )
 
 
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
-# Wstaw tutaj swój link do grupy
-GROUP_LINK = "https://web.telegram.org/k/#-4420424466"
-
-
 async def process_rules(callback: CallbackQuery):
     user_id = callback.from_user.id
 
+    # zapisanie zaakceptowania regulaminu
     accept_rules(user_id)
 
     bot: Bot = callback.bot
 
+    # link ważny 25 minut
     expire_date = datetime.now(timezone.utc) + timedelta(
         seconds=INVITE_LINK_DURATION
     )
 
+    # utworzenie jednorazowego linku
     invite = await bot.create_chat_invite_link(
         chat_id=GROUP_ID,
         expire_date=expire_date,
@@ -124,7 +116,7 @@ async def process_rules(callback: CallbackQuery):
     await callback.message.edit_text(
         "✅ Regulamin zaakceptowany!\n\n"
         "🎟 Twój link jest jednorazowy.\n"
-        "⏳ Wygasa za 25 minut.\n\n"
+        "⏳ Jest ważny przez 25 minut.\n\n"
         "Kliknij przycisk poniżej, aby dołączyć do grupy.",
         reply_markup=keyboard
     )

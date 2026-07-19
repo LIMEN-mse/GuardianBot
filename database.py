@@ -1,6 +1,6 @@
 import sqlite3
 
-db = sqlite3.connect("data.db")
+db = sqlite3.connect("guardian.db")
 cursor = db.cursor()
 
 
