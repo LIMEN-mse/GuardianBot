@@ -74,11 +74,30 @@ async def process_answer(callback: CallbackQuery):
     )
 
 
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+# Wstaw tutaj swój link do grupy
+GROUP_LINK = "https://web.telegram.org/k/#-4420424466"
+
+
 async def process_rules(callback: CallbackQuery):
     user_id = callback.from_user.id
 
     accept_rules(user_id)
 
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="🚀 Dołącz do grupy",
+                    url=GROUP_LINK
+                )
+            ]
+        ]
+    )
+
     await callback.message.edit_text(
-        "✅ Weryfikacja zakończona!\n\nZa chwilę otrzymasz dostęp do serwera."
+        "✅ Regulamin został zaakceptowany!\n\n"
+        "Kliknij przycisk poniżej, aby dołączyć do grupy.",
+        reply_markup=keyboard
     )
