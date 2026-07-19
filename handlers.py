@@ -8,16 +8,35 @@ from aiogram.types import (
     ChatPermissions
 )
 
-from keyboards import start_keyboard
+from config import MUTE_TIME
+from keyboards import (
+    start_keyboard,
+    admin_keyboard
+)
+
 from verification import (
     start_verification,
     process_answer,
     process_rules
 )
-from config import MUTE_TIME
+
+from database import (
+    get_total_users,
+    get_verified_users,
+    get_rules_users
+)
 
 router = Router()
 
+# <<< TU WPISZ SWOJE ID TELEGRAMA >>>
+ADMINS = [
+    123456789
+]
+
+
+# ===========================
+# START
+# ===========================
 
 @router.message(Command("start"))
 async def start(message: Message):
@@ -27,6 +46,46 @@ async def start(message: Message):
         reply_markup=start_keyboard
     )
 
+
+# ===========================
+# WYŚWIETL SWOJE ID
+# ===========================
+
+@router.message(Command("id"))
+async def my_id(message: Message):
+    await message.answer(
+        f"🆔 Twoje ID:\n\n<code>{message.from_user.id}</code>",
+        parse_mode="HTML"
+    )
+
+
+# ===========================
+# PANEL ADMINA
+# ===========================
+
+@router.message(Command("panel"))
+async def panel(message: Message):
+
+    if message.from_user.id not in ADMINS:
+        return
+
+    total = get_total_users()
+    verified = get_verified_users()
+    rules = get_rules_users()
+
+    await message.answer(
+        f"🛡 <b>Guardian Panel</b>\n\n"
+        f"👥 Użytkowników: <b>{total}</b>\n"
+        f"✅ Zweryfikowanych: <b>{verified}</b>\n"
+        f"📜 Zaakceptowało regulamin: <b>{rules}</b>",
+        parse_mode="HTML",
+        reply_markup=admin_keyboard
+    )
+
+
+# ===========================
+# WERYFIKACJA
+# ===========================
 
 @router.callback_query(F.data == "start_verify")
 async def start_verify(callback: CallbackQuery):
@@ -43,7 +102,10 @@ async def accept(callback: CallbackQuery):
     await process_rules(callback)
 
 
-# Wykrycie nowego użytkownika w grupie
+# ===========================
+# NOWY UŻYTKOWNIK
+# ===========================
+
 @router.message(F.new_chat_members)
 async def new_member(message: Message):
 
@@ -54,48 +116,65 @@ async def new_member(message: Message):
         if user.is_bot:
             continue
 
-        # Zablokowanie pisania
-        await bot.restrict_chat_member(
-            chat_id=message.chat.id,
-            user_id=user.id,
-            permissions=ChatPermissions(
-                can_send_messages=False
+        try:
+
+            await bot.restrict_chat_member(
+                chat_id=message.chat.id,
+                user_id=user.id,
+                permissions=ChatPermissions(
+                    can_send_messages=False
+                )
             )
-        )
 
-        await message.answer(
-            f"👋 Witaj {user.full_name}!\n\n"
-            "📖 Przez pierwsze 5 minut możesz tylko czytać czat.\n"
-            "⏳ Po 5 minutach możliwość pisania zostanie odblokowana automatycznie."
-        )
+            await message.answer(
+                f"👋 Witaj {user.full_name}!\n\n"
+                "📖 Przez pierwsze 5 minut możesz tylko czytać czat.\n\n"
+                "⏳ Po tym czasie możliwość pisania zostanie odblokowana automatycznie."
+            )
 
-        asyncio.create_task(
-            unmute_user(bot, message.chat.id, user.id)
-        )
+            asyncio.create_task(
+                unmute_user(
+                    bot,
+                    message.chat.id,
+                    user.id
+                )
+            )
+
+        except Exception as e:
+            print(e)
 
 
 async def unmute_user(bot, chat_id, user_id):
 
     await asyncio.sleep(MUTE_TIME)
 
-    await bot.restrict_chat_member(
-        chat_id=chat_id,
-        user_id=user_id,
-        permissions=ChatPermissions(
-            can_send_messages=True,
-            can_send_other_messages=True,
-            can_add_web_page_previews=True,
-            can_send_polls=True,
-            can_invite_users=True
+    try:
+
+        await bot.restrict_chat_member(
+            chat_id=chat_id,
+            user_id=user_id,
+            permissions=ChatPermissions(
+                can_send_messages=True,
+                can_send_other_messages=True,
+                can_send_polls=True,
+                can_add_web_page_previews=True,
+                can_invite_users=True
+            )
         )
-    )
 
-    await bot.send_message(
-        chat_id,
-        f"🔓 <a href='tg://user?id={user_id}'>Użytkownik</a> może już pisać na czacie!",
-        parse_mode="HTML"
-    )
+        await bot.send_message(
+            chat_id,
+            f"🔓 <a href='tg://user?id={user_id}'>Użytkownik</a> może już pisać.",
+            parse_mode="HTML"
+        )
 
+    except Exception as e:
+        print(e)
+
+
+# ===========================
+# DEBUG
+# ===========================
 
 @router.message()
 async def debug(message: Message):

@@ -60,3 +60,24 @@ def rules_accepted(user_id):
     row = cursor.fetchone()
 
     return bool(row and row[0])
+
+
+def get_total_users():
+    cursor.execute(
+        "SELECT COUNT(*) FROM users"
+    )
+    return cursor.fetchone()[0]
+
+
+def get_verified_users():
+    cursor.execute(
+        "SELECT COUNT(*) FROM users WHERE verified=1"
+    )
+    return cursor.fetchone()[0]
+
+
+def get_rules_users():
+    cursor.execute(
+        "SELECT COUNT(*) FROM users WHERE accepted_rules=1"
+    )
+    return cursor.fetchone()[0]

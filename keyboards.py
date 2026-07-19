@@ -47,3 +47,27 @@ def question_keyboard(question):
     return InlineKeyboardMarkup(
         inline_keyboard=keyboard
     )
+
+
+admin_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="📊 Statystyki",
+                callback_data="admin_stats"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="👥 Lista użytkowników",
+                callback_data="admin_users"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="📢 Ogłoszenie",
+                callback_data="admin_broadcast"
+            )
+        ]
+    ]
+)
