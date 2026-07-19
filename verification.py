@@ -1,5 +1,8 @@
 from aiogram.types import CallbackQuery
 
+from config import GROUP_ID
+from aiogram import Bot
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from questions import QUESTIONS
 from rules import RULES
 from keyboards import (
@@ -85,19 +88,26 @@ async def process_rules(callback: CallbackQuery):
 
     accept_rules(user_id)
 
+    bot: Bot = callback.bot
+
+    invite = await bot.create_chat_invite_link(
+        chat_id=GROUP_ID,
+        member_limit=1
+    )
+
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
                 InlineKeyboardButton(
                     text="🚀 Dołącz do grupy",
-                    url=GROUP_LINK
+                    url=invite.invite_link
                 )
             ]
         ]
     )
 
     await callback.message.edit_text(
-        "✅ Regulamin został zaakceptowany!\n\n"
+        "✅ Weryfikacja zakończona!\n\n"
         "Kliknij przycisk poniżej, aby dołączyć do grupy.",
         reply_markup=keyboard
     )
