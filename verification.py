@@ -1,5 +1,14 @@
 from aiogram.types import CallbackQuery
 
+from datetime import datetime, timedelta, timezone
+
+from aiogram import Bot
+from aiogram.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton
+)
+
+from config import GROUP_ID, INVITE_LINK_DURATION
 from config import GROUP_ID
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -90,9 +99,15 @@ async def process_rules(callback: CallbackQuery):
 
     bot: Bot = callback.bot
 
+    expire_date = datetime.now(timezone.utc) + timedelta(
+        seconds=INVITE_LINK_DURATION
+    )
+
     invite = await bot.create_chat_invite_link(
         chat_id=GROUP_ID,
-        member_limit=1
+        expire_date=expire_date,
+        member_limit=1,
+        name=f"user_{user_id}"
     )
 
     keyboard = InlineKeyboardMarkup(
@@ -107,7 +122,9 @@ async def process_rules(callback: CallbackQuery):
     )
 
     await callback.message.edit_text(
-        "✅ Weryfikacja zakończona!\n\n"
+        "✅ Regulamin zaakceptowany!\n\n"
+        "🎟 Twój link jest jednorazowy.\n"
+        "⏳ Wygasa za 25 minut.\n\n"
         "Kliknij przycisk poniżej, aby dołączyć do grupy.",
         reply_markup=keyboard
     )
