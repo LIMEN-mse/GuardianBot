@@ -7,6 +7,7 @@ from handlers import router
 from database import create_tables
 
 
+print(f"TOKEN: {TOKEN}")
 bot = Bot(TOKEN)
 dp = Dispatcher()
 
