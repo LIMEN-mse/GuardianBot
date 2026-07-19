@@ -6,11 +6,6 @@ from config import TOKEN
 from handlers import router
 from database import create_tables
 
-
-# Debug
-print("TOKEN:", repr(TOKEN))
-print("TOKEN LENGTH:", len(TOKEN) if TOKEN else "BRAK TOKENA")
-
 bot = Bot(TOKEN)
 dp = Dispatcher()
 
@@ -22,11 +17,13 @@ async def main():
 
     print("🚀 Bot wystartował!")
 
-    # Sprawdzenie czy Telegram akceptuje token
     me = await bot.get_me()
-    print(f"✅ Zalogowano jako: @{me.username} ({me.id})")
+    print(f"✅ Zalogowano jako @{me.username}")
 
-    await dp.start_polling(bot)
+    await dp.start_polling(
+        bot,
+        allowed_updates=dp.resolve_used_update_types()
+    )
 
 
 if __name__ == "__main__":
