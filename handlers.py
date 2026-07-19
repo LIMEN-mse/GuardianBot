@@ -34,3 +34,8 @@ async def answer(callback: CallbackQuery):
 @router.callback_query(F.data == "accept_rules")
 async def accept(callback: CallbackQuery):
     await process_rules(callback)
+
+
+@router.message()
+async def debug(message: Message):
+    print("CHAT ID:", message.chat.id)
