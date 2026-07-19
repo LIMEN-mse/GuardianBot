@@ -15,6 +15,7 @@ from database import (
 )
 
 router = Router()
+print("✅ ADMIN ROUTER ZAŁADOWANY")
 
 ADMINS = [
     7470778133
@@ -28,8 +29,9 @@ ADMINS = [
 @router.message(Command("panel"))
 async def panel(message: Message):
 
-    if message.from_user.id not in ADMINS:
-        await message.answer("❌ Nie masz dostępu.")
+    print("PANEL URUCHOMIONY")
+
+    await message.answer("Panel działa!")
         return
 
     total = get_total_users()
