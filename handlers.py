@@ -150,12 +150,8 @@ async def unmute_user(bot, chat_id, user_id):
 
 
 # ===========================
-# DEBUG
+# ZAMÓW
 # ===========================
-
-@router.message()
-async def debug(message: Message):
-    print("CHAT ID:", message.chat.id)
 
 
 @router.message(Command("zamow"))
@@ -194,3 +190,14 @@ async def order(message: Message):
         await msg.delete()
     except:
         pass
+
+
+# ===========================
+# DEBUG
+# ===========================
+
+@router.message()
+async def debug(message: Message):
+    print("CHAT ID:", message.chat.id)
+
+
