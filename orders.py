@@ -40,6 +40,8 @@ async def start_order(message: Message, state: FSMContext):
 @router.message(OrderState.waiting_for_products)
 async def products(message: Message, state: FSMContext):
 
+    print(">>> PRODUCTS HANDLER")
+
     await state.update_data(
         products=message.text
     )
