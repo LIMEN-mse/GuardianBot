@@ -21,21 +21,28 @@ def create_tables():
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS orders(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        username TEXT,
-        full_name TEXT,
-        products TEXT NOT NULL,
-        place TEXT NOT NULL,
-        order_time TEXT NOT NULL,
-        status TEXT DEFAULT 'NOWE',
-        admin_message_id INTEGER,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    username TEXT,
+    full_name TEXT,
+    products TEXT NOT NULL,
+    place TEXT NOT NULL,
+    order_time TEXT NOT NULL,
+    status TEXT DEFAULT 'NOWE',
+    price TEXT,
+    admin_message_id INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
     """)
 
     db.commit()
 
+
+try:
+    cursor.execute("ALTER TABLE orders ADD COLUMN price TEXT")
+    db.commit()
+except:
+    pass
 
 # ==========================================
 # UŻYTKOWNICY
@@ -289,3 +296,36 @@ def set_started(user_id):
     )
 
     db.commit()
+
+
+def set_order_price(order_id, price):
+
+    cursor.execute(
+        """
+        UPDATE orders
+        SET price=?
+        WHERE id=?
+        """,
+        (price, order_id)
+    )
+
+    db.commit()
+
+
+def get_order_price(order_id):
+
+    cursor.execute(
+        """
+        SELECT price
+        FROM orders
+        WHERE id=?
+        """,
+        (order_id,)
+    )
+
+    row = cursor.fetchone()
+
+    if not row:
+        return None
+
+    return row[0]

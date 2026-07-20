@@ -15,12 +15,17 @@ from states import OrderState
 from keyboards import order_admin_keyboard
 
 from database import (
+    add_user,
+    has_started,
+    set_started,
     get_user_orders,
     add_order,
     set_admin_message,
     update_order_status,
     get_order,
-    format_order_number
+    format_order_number,
+    set_order_price,
+    get_order_price
 )
 
 router = Router()
@@ -331,10 +336,74 @@ async def confirm_order(
 
     await callback.answer()
 
+@router.callback_query(F.data.startswith("price_"))
+async def ask_price(
+    callback: CallbackQuery,
+    state: FSMContext
+):
 
+    order_id = int(callback.data.split("_")[1])
+
+    await state.update_data(
+        price_order_id=order_id
+    )
+
+    await state.set_state(
+        OrderState.waiting_for_price
+    )
+
+    await callback.message.answer(
+        f"💰 Podaj cenę dla zamówienia <b>{format_order_number(order_id)}</b>",
+        parse_mode="HTML"
+    )
+
+    await callback.answer()
 # =====================================
 # WSPÓLNA ZMIANA STATUSU
 # =====================================
+
+
+@router.message(OrderState.waiting_for_price)
+async def save_price(
+    message: Message,
+    state: FSMContext
+):
+
+    data = await state.get_data()
+
+    order_id = data["price_order_id"]
+
+    price = message.text
+
+    set_order_price(order_id, price)
+
+    order = get_order(order_id)
+
+    if not order:
+        await message.answer("❌ Nie znaleziono zamówienia.")
+        await state.clear()
+        return
+
+    user_id = order[1]
+
+    await message.answer(
+        f"✅ Cena została ustawiona na: <b>{price} zł</b>",
+        parse_mode="HTML"
+    )
+
+    try:
+        await message.bot.send_message(
+            user_id,
+            f"💰 <b>Twoje zamówienie zostało wycenione.</b>\n\n"
+            f"Do zapłaty: <b>{price} zł</b>\n\n"
+            "Jeżeli akceptujesz cenę, oczekuj na zmianę statusu zamówienia.",
+            parse_mode="HTML"
+        )
+    except Exception as e:
+        print(e)
+
+    await state.clear()
+
 
 async def change_status(
     callback: CallbackQuery,

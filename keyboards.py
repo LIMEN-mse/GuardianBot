@@ -111,6 +111,12 @@ def order_admin_keyboard(order_id):
             ],
             [
                 InlineKeyboardButton(
+                    text="💰 Ustal cenę",
+                    callback_data=f"price_{order_id}"
+                )
+            ],
+            [
+                InlineKeyboardButton(
                     text="❌ Odrzuć",
                     callback_data=f"cancel_{order_id}"
                 )
