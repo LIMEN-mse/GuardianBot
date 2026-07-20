@@ -1,15 +1,91 @@
-from aiogram.types import (
-    InlineKeyboardMarkup,
-    InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+
+# ==========================
+# START
+# ==========================
+
+start_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="🛡 Rozpocznij weryfikację",
+                callback_data="start_verify"
+            )
+        ]
+    ]
 )
 
-# start_keyboard
 
-# rules_keyboard
+# ==========================
+# REGULAMIN
+# ==========================
 
-# question_keyboard()
+rules_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="✅ Akceptuję regulamin",
+                callback_data="accept_rules"
+            )
+        ]
+    ]
+)
 
-# admin_keyboard
+
+# ==========================
+# PYTANIA
+# ==========================
+
+def question_keyboard(question):
+    keyboard = []
+
+    for i, answer in enumerate(question["answers"]):
+        keyboard.append(
+            [
+                InlineKeyboardButton(
+                    text=answer,
+                    callback_data=f"answer_{i}"
+                )
+            ]
+        )
+
+    return InlineKeyboardMarkup(
+        inline_keyboard=keyboard
+    )
+
+
+# ==========================
+# PANEL ADMINA
+# ==========================
+
+admin_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="📊 Statystyki",
+                callback_data="admin_stats"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="👥 Lista użytkowników",
+                callback_data="admin_users"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="📢 Ogłoszenie",
+                callback_data="admin_broadcast"
+            )
+        ]
+    ]
+)
+
+
+# ==========================
+# PANEL ZAMÓWIEŃ
+# ==========================
 
 def order_admin_keyboard(order_id):
 
@@ -41,28 +117,3 @@ def order_admin_keyboard(order_id):
             ]
         ]
     )
-
-
-def order_admin_keyboard(order_id):
-admin_keyboard = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="📊 Statystyki",
-                callback_data="admin_stats"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="👥 Lista użytkowników",
-                callback_data="admin_users"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="📢 Ogłoszenie",
-                callback_data="admin_broadcast"
-            )
-        ]
-    ]
-)
