@@ -24,8 +24,6 @@ async def main():
     me = await bot.get_me()
     print(f"✅ Zalogowano jako @{me.username}")
 
-)
-
     await dp.start_polling(
         bot,
         allowed_updates=dp.resolve_used_update_types()
