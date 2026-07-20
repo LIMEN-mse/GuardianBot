@@ -12,11 +12,12 @@ def create_tables():
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users(
-        user_id INTEGER PRIMARY KEY,
-        verified INTEGER DEFAULT 0,
-        accepted_rules INTEGER DEFAULT 0,
-        started INTEGER DEFAULT 0
-    )
+    user_id INTEGER PRIMARY KEY,
+    verified INTEGER DEFAULT 0,
+    accepted_rules INTEGER DEFAULT 0,
+    started INTEGER DEFAULT 0,
+    promo_orders INTEGER DEFAULT 0
+)
     """)
 
     cursor.execute("""
@@ -37,6 +38,13 @@ def create_tables():
 
     db.commit()
 
+try:
+    cursor.execute(
+        "ALTER TABLE users ADD COLUMN promo_orders INTEGER DEFAULT 0"
+    )
+    db.commit()
+except:
+    pass
 
 try:
     cursor.execute("ALTER TABLE orders ADD COLUMN price TEXT")
@@ -382,3 +390,30 @@ def get_orders_by_status(status):
     )
 
     return cursor.fetchall()
+
+
+def get_promo_orders(user_id):
+
+    cursor.execute("""
+        SELECT promo_orders
+        FROM users
+        WHERE user_id=?
+    """, (user_id,))
+
+    row = cursor.fetchone()
+
+    if not row:
+        return 0
+
+    return row[0]
+
+
+def increase_promo_orders(user_id):
+
+    cursor.execute("""
+        UPDATE users
+        SET promo_orders = promo_orders + 1
+        WHERE user_id=?
+    """, (user_id,))
+
+    db.commit()

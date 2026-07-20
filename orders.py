@@ -23,7 +23,9 @@ from database import (
     format_order_number,
     set_order_price,
     get_order_price,
-    get_orders_count
+    get_orders_count,
+     get_promo_orders,
+    increase_promo_orders
 )
 
 router = Router()
@@ -46,7 +48,7 @@ async def start_order(message: Message, state: FSMContext):
 
     await state.clear()
 
-    orders = get_orders_count(message.from_user.id)
+    orders = get_promo_orders(message.from_user.id)
 
     await state.set_state(OrderState.waiting_for_products)
 
@@ -300,9 +302,12 @@ async def confirm_order(
         full_name=callback.from_user.full_name,
         products=data["products"],
         place=place,
-        order_time=data["order_time"],
-        promo=data["promo"]
+         order_time=data["order_time"],
+         promo=data["promo"]
     )
+
+    if data["promo"]:
+        increase_promo_orders(callback.from_user.id)
 
     number = format_order_number(order_id)
 
