@@ -278,6 +278,7 @@ async def order_time(
     OrderState.waiting_for_confirmation,
     F.data == "confirm_order"
 )
+from database import add_user
 async def confirm_order(
     callback: CallbackQuery,
     state: FSMContext
@@ -297,6 +298,8 @@ async def confirm_order(
         username = f"@{username}"
     else:
         username = "Brak"
+
+    add_user(callback.from_user.id)
 
     order_id = add_order(
         user_id=callback.from_user.id,

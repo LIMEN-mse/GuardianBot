@@ -416,4 +416,14 @@ def increase_promo_orders(user_id):
         WHERE user_id=?
     """, (user_id,))
 
+    print("Rows updated:", cursor.rowcount)
+
     db.commit()
+
+
+def user_exists(user_id):
+    cursor.execute(
+        "SELECT * FROM users WHERE user_id=?",
+        (user_id,)
+    )
+    print(cursor.fetchone())
