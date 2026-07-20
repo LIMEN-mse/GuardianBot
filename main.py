@@ -24,9 +24,6 @@ async def main():
     me = await bot.get_me()
     print(f"✅ Zalogowano jako @{me.username}")
 
-    await bot.send_message(
-    ADMIN_CHAT,
-    "✅ Test wiadomości do grupy administracyjnej."
 )
 
     await dp.start_polling(
