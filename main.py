@@ -6,11 +6,13 @@ from admin import router as admin_router
 from config import TOKEN
 from handlers import router
 from database import create_tables
+from admin_orders import router as admin_orders_router
 
 bot = Bot(TOKEN)
 dp = Dispatcher()
 
 dp.include_router(orders_router)
+dp.include_router(admin_orders_router)
 dp.include_router(router)
 dp.include_router(admin_router)
 
