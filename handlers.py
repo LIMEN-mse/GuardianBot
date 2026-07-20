@@ -66,10 +66,15 @@ async def start(message: Message):
             "• miejsce odbioru,\n"
             "• godzinę odbioru.\n\n"
 
-            "💰 <b>Orientacyjny cennik</b>\n"
+            "💰 <b>Orientacyjny cennik</b>\n\n"
+
             "⚡ Energetyk — <b>10 zł</b>\n"
             "🚬 Papierosy klasyczne — <b>40 zł</b>\n"
-            "⚠️ Papierosy elektroniczne są wyceniane indywidualnie.\n\n"
+            "💨 Papierosy elektroniczne — <b>wycena indywidualna</b>\n"
+            "🍾 Alkohol — <b>wycena indywidualna</b>\n\n"
+
+            "ℹ️ Ceny pozostałych produktów ustalane są indywidualnie.\n"
+            "Jeżeli nie ma czegoś na liście, po złożeniu zamówienia otrzymasz wycenę.\n\n"
 
             "📋 Status swoich zamówień sprawdzisz komendą:\n"
             "<code>/moje</code>",
