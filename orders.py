@@ -72,6 +72,8 @@ async def start_order(message: Message, state: FSMContext):
 
         "🛒 <b>Składanie zamówienia</b>\n\n"
 
+        "📜 Korzystając z bota akceptujesz <b>regulamin</b>
+
         + promo +
 
         "💵 Płatność wyłącznie gotówką.\n\n"
