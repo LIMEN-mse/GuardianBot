@@ -149,55 +149,14 @@ async def unmute_user(bot, chat_id, user_id):
         print(e)
 
 
-# ===========================
-# ZAMÓW
-# ===========================
-
-
-@router.message(Command("zamow"))
-async def order(message: Message):
-
-    # jeśli użytkownik jest już na priv
-    if message.chat.type == "private":
-        await message.answer(
-            "🛒 Aby rozpocząć składanie zamówienia wpisz /start_order"
-        )
-        return
-
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="🛒 Otwórz zamówienie",
-                    url=f"https://t.me/{BOT_USERNAME}"
-                )
-            ]
-        ]
-    )
-
-    msg = await message.reply(
-        "🛒 Aby złożyć zamówienie przejdź do prywatnej rozmowy z botem.",
-        reply_markup=keyboard
-    )
-
-    # usuwanie wiadomości po 15 sekundach
-    import asyncio
-
-    await asyncio.sleep(15)
-
-    try:
-        await message.delete()
-        await msg.delete()
-    except:
-        pass
 
 
 # ===========================
 # DEBUG
 # ===========================
 
-@router.message()
-async def debug(message: Message):
-    print("CHAT ID:", message.chat.id)
+# @router.message()
+# async def debug(message: Message):
+#     print("CHAT ID:", message.chat.id)
 
 
