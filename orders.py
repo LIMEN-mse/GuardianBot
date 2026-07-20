@@ -161,36 +161,36 @@ async def order_time(
     state: FSMContext
 ):
 
-match = re.fullmatch(r"(\d{1,2}):(\d{2})", message.text.strip())
+    match = re.fullmatch(r"(\d{1,2}):(\d{2})", message.text.strip())
 
-if not match:
-    await message.answer(
-        "❌ Podaj godzinę w formacie <code>18:30</code>.",
-        parse_mode="HTML"
+    if not match:
+        await message.answer(
+            "❌ Podaj godzinę w formacie <code>18:30</code>.",
+            parse_mode="HTML"
+        )
+        return
+
+    hour = int(match.group(1))
+    minute = int(match.group(2))
+
+    if minute > 59:
+        await message.answer(
+            "❌ Niepoprawna godzina.",
+            parse_mode="HTML"
+        )
+        return
+
+    # Dozwolone godziny: 08:00–22:00
+    if hour < 8 or hour > 22 or (hour == 22 and minute > 0):
+        await message.answer(
+            "❌ Zamówienia przyjmowane są wyłącznie w godzinach <b>08:00–22:00</b>.",
+            parse_mode="HTML"
+        )
+        return
+
+    await state.update_data(
+        order_time=message.text
     )
-    return
-
-hour = int(match.group(1))
-minute = int(match.group(2))
-
-if minute > 59:
-    await message.answer(
-        "❌ Niepoprawna godzina.",
-        parse_mode="HTML"
-    )
-    return
-
-# Dozwolone godziny: 08:00–22:00
-if hour < 8 or hour > 22 or (hour == 22 and minute > 0):
-    await message.answer(
-        "❌ Zamówienia przyjmowane są wyłącznie w godzinach <b>08:00–22:00</b>.",
-        parse_mode="HTML"
-    )
-    return
-
-await state.update_data(
-    order_time=message.text
-)
 
     data = await state.get_data()
 
