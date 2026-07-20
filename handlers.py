@@ -214,3 +214,6 @@ from aiogram.types import Message
 @router.message(F.chat.type.in_({"group", "supergroup"}))
 async def debug_chat(message: Message):
     print("CHAT ID:", message.chat.id)
+
+
+

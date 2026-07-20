@@ -1,3 +1,5 @@
+import re
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import (
@@ -23,6 +25,14 @@ from database import (
 
 router = Router()
 
+
+def format_products(text: str):
+
+    items = re.split(r"[,\n]+", text)
+
+    items = [item.strip() for item in items if item.strip()]
+
+    return "\n".join(f"• {item}" for item in items)
 
 # =====================================
 # START ZAMÓWIENIA
@@ -64,27 +74,26 @@ async def products(message: Message, state: FSMContext):
     print(">>> PRODUCTS HANDLER")
     print(message.text)
 
+    products = format_products(message.text)
+
     await state.update_data(
-        products=message.text
+        products=products
     )
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
-
             [
                 InlineKeyboardButton(
                     text="🏪 Dino",
                     callback_data="place_dino"
                 )
             ],
-
             [
                 InlineKeyboardButton(
                     text="🏪 Lewiatan",
                     callback_data="place_lewiatan"
                 )
             ]
-
         ]
     )
 
