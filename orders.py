@@ -97,3 +97,99 @@ async def place(callback: CallbackQuery, state: FSMContext):
     )
 
     await callback.answer()
+
+
+# ==========================
+# GODZINA
+# ==========================
+
+@router.message(OrderState.waiting_for_time)
+async def order_time(message: Message, state: FSMContext):
+
+    await state.update_data(
+        time=message.text
+    )
+
+    data = await state.get_data()
+
+    place_name = "🏪 Dino" if data["place"] == "dino" else "🏪 Lewiatan"
+
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="✅ Potwierdź",
+                    callback_data="confirm_order"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="❌ Anuluj",
+                    callback_data="cancel_order"
+                )
+            ]
+        ]
+    )
+
+    await state.set_state(OrderState.waiting_for_confirmation)
+
+    await message.answer(
+        f"🛒 <b>Podsumowanie zamówienia</b>\n\n"
+
+        f"📦 <b>Zamówienie:</b>\n"
+        f"{data['products']}\n\n"
+
+        f"📍 <b>Odbiór:</b>\n"
+        f"{place_name}\n\n"
+
+        f"🕒 <b>Godzina:</b>\n"
+        f"{data['time']}\n\n"
+
+        f"💵 <b>Płatność:</b>\n"
+        f"Gotówka\n\n"
+
+        f"Czy potwierdzasz zamówienie?",
+
+        parse_mode="HTML",
+        reply_markup=keyboard
+    )
+
+
+# ==========================
+# POTWIERDZENIE
+# ==========================
+
+@router.callback_query(
+    OrderState.waiting_for_confirmation,
+    F.data == "confirm_order"
+)
+async def confirm(callback: CallbackQuery, state: FSMContext):
+
+    await callback.message.edit_text(
+        "✅ Zamówienie zostało przyjęte.\n\n"
+        "Numer zamówienia:\n"
+        "#0001"
+    )
+
+    await state.clear()
+
+    await callback.answer()
+
+
+# ==========================
+# ANULOWANIE
+# ==========================
+
+@router.callback_query(
+    OrderState.waiting_for_confirmation,
+    F.data == "cancel_order"
+)
+async def cancel(callback: CallbackQuery, state: FSMContext):
+
+    await state.clear()
+
+    await callback.message.edit_text(
+        "❌ Zamówienie zostało anulowane."
+    )
+
+    await callback.answer()
