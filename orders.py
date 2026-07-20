@@ -15,9 +15,6 @@ from states import OrderState
 from keyboards import order_admin_keyboard
 
 from database import (
-    add_user,
-    has_started,
-    set_started,
     get_user_orders,
     add_order,
     set_admin_message,
@@ -25,7 +22,8 @@ from database import (
     get_order,
     format_order_number,
     set_order_price,
-    get_order_price
+    get_order_price,
+    get_orders_count
 )
 
 router = Router()
@@ -48,10 +46,26 @@ async def start_order(message: Message, state: FSMContext):
 
     await state.clear()
 
+    orders = get_orders_count(message.from_user.id)
+
     await state.set_state(OrderState.waiting_for_products)
 
+    promo = ""
+
+    if orders < 3:
+        promo = (
+            "🎁 <b>PROMOCJA DLA NOWYCH KLIENTÓW</b>\n\n"
+            "Na Twoje pierwsze <b>3 zamówienia</b> obowiązują niższe ceny:\n\n"
+            "⚡ Energetyk — <b>10 zł</b> (zamiast 15 zł)\n"
+            "🚬 Papierosy klasyczne — <b>35 zł</b> (zamiast 45 zł)\n\n"
+            "━━━━━━━━━━━━━━━━━━\n\n"
+        )
+
     await message.answer(
+
         "🛒 <b>Składanie zamówienia</b>\n\n"
+
+        + promo +
 
         "💵 Płatność wyłącznie gotówką.\n\n"
 

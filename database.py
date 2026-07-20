@@ -329,3 +329,47 @@ def get_order_price(order_id):
         return None
 
     return row[0]
+
+
+def get_orders_count(user_id):
+
+    cursor.execute(
+        """
+        SELECT COUNT(*)
+        FROM orders
+        WHERE user_id=?
+        """,
+        (user_id,)
+    )
+
+    return cursor.fetchone()[0]
+
+
+def get_last_orders(limit=20):
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM orders
+        ORDER BY id DESC
+        LIMIT ?
+        """,
+        (limit,)
+    )
+
+    return cursor.fetchall()
+
+
+def get_orders_by_status(status):
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM orders
+        WHERE status=?
+        ORDER BY id DESC
+        """,
+        (status,)
+    )
+
+    return cursor.fetchall()
