@@ -3,7 +3,7 @@ import asyncio
 from orders import router as orders_router
 from aiogram import Bot, Dispatcher
 from admin import router as admin_router
-from config import TOKEN
+from config import TOKEN, ADMIN_CHAT
 from handlers import router
 from database import create_tables
 from admin_orders import router as admin_orders_router
