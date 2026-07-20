@@ -396,7 +396,7 @@ async def save_price(
             user_id,
             f"💰 <b>Twoje zamówienie zostało wycenione.</b>\n\n"
             f"Do zapłaty: <b>{price} zł</b>\n\n"
-            "Jeżeli akceptujesz cenę, oczekuj na zmianę statusu zamówienia.",
+            "Oczekuj na zmianę statusu zamówienia.",
             parse_mode="HTML"
         )
     except Exception as e:
