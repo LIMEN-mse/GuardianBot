@@ -160,3 +160,13 @@ async def unmute_user(bot, chat_id, user_id):
 #     print("CHAT ID:", message.chat.id)
 
 
+# ==========================
+# DEBUG CHAT ID
+# ==========================
+
+from aiogram import F
+from aiogram.types import Message
+
+@router.message(F.chat.type.in_({"group", "supergroup"}))
+async def debug_chat(message: Message):
+    print("CHAT ID:", message.chat.id)
