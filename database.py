@@ -1,4 +1,7 @@
 import sqlite3
+import os
+
+print("DB PATH:", os.path.abspath("guardian.db"))
 
 db = sqlite3.connect("guardian.db")
 cursor = db.cursor()
