@@ -51,8 +51,11 @@ async def start_order(message: Message, state: FSMContext):
     await state.set_state(OrderState.waiting_for_products)
 
     promo = ""
+    promo_order = False
 
     if orders < 3:
+        promo_order = True
+
         promo = (
             "🎁 <b>PROMOCJA DLA NOWYCH KLIENTÓW</b>\n\n"
             "Na Twoje pierwsze <b>3 zamówienia</b> obowiązują niższe ceny:\n\n"
@@ -60,6 +63,10 @@ async def start_order(message: Message, state: FSMContext):
             "🚬 Papierosy klasyczne — <b>35 zł</b> (zamiast 45 zł)\n\n"
             "━━━━━━━━━━━━━━━━━━\n\n"
         )
+
+    await state.update_data(
+        promo=promo_order
+    )
 
     await message.answer(
 
@@ -89,9 +96,6 @@ async def start_order(message: Message, state: FSMContext):
 
 @router.message(OrderState.waiting_for_products)
 async def products(message: Message, state: FSMContext):
-
-    print(">>> PRODUCTS HANDLER")
-    print(message.text)
 
     products = format_products(message.text)
 
@@ -294,10 +298,13 @@ async def confirm_order(
         full_name=callback.from_user.full_name,
         products=data["products"],
         place=place,
-        order_time=data["order_time"]
+        order_time=data["order_time"],
+        promo=data["promo"]
     )
 
     number = format_order_number(order_id)
+
+    promo = "🎁 TAK" if data["promo"] else "❌ NIE"
 
     admin_msg = await callback.bot.send_message(
         chat_id=ADMIN_CHAT,
@@ -309,6 +316,9 @@ async def confirm_order(
             f"{callback.from_user.full_name}\n"
             f"{username}\n"
             f"<code>{callback.from_user.id}</code>\n\n"
+
+            f"🎁 <b>Promocja</b>\n"
+            f"{promo}\n\n"
 
             f"📦 <b>Produkty</b>\n"
             f"{data['products']}\n\n"
@@ -350,6 +360,7 @@ async def confirm_order(
 
     await callback.answer()
 
+
 @router.callback_query(F.data.startswith("price_"))
 async def ask_price(
     callback: CallbackQuery,
@@ -387,7 +398,13 @@ async def save_price(
 
     order_id = data["price_order_id"]
 
-    price = message.text
+    price = message.text.replace(",", ".")
+
+    try:
+        float(price)
+    except ValueError:
+        await message.answer("❌ Podaj poprawną cenę.")
+        return
 
     set_order_price(order_id, price)
 
@@ -431,12 +448,11 @@ async def change_status(
 
     order = get_order(order_id)
 
-    number = format_order_number(order_id)
-
-    print("ORDER:", order)
     if not order:
         await callback.answer("Nie znaleziono zamówienia.")
         return
+
+    number = format_order_number(order_id)
 
     user_id = order[1]
     username = order[2]
@@ -445,6 +461,9 @@ async def change_status(
     place = order[5]
     order_time = order[6]
 
+    # kolumna promo
+    promo = "🎁 TAK" if order[11] else "❌ NIE"
+
     text = (
         f"🆕 <b>ZAMÓWIENIE {number}</b>\n\n"
 
@@ -452,6 +471,9 @@ async def change_status(
         f"{full_name}\n"
         f"{username}\n"
         f"<code>{user_id}</code>\n\n"
+
+        f"🎁 <b>Promocja</b>\n"
+        f"{promo}\n\n"
 
         f"📦 <b>Produkty</b>\n"
         f"{products}\n\n"
@@ -475,7 +497,7 @@ async def change_status(
     try:
         await callback.bot.send_message(
             user_id,
-            f"📦 Zamówienie <b>#{number}</b>\n\n"
+            f"📦 Zamówienie <b>{number}</b>\n\n"
             f"Status:\n"
             f"{emoji} <b>{status}</b>",
             parse_mode="HTML"

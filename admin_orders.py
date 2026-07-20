@@ -98,12 +98,17 @@ async def show_order(callback: CallbackQuery):
 
     number = format_order_number(order_id)
 
+    promo = "🎁 TAK" if order[11] else "❌ NIE"
+
     text = (
         f"📦 <b>{number}</b>\n\n"
 
         f"👤 {order[3]}\n"
         f"{order[2]}\n"
         f"<code>{order[1]}</code>\n\n"
+
+        f"🎁 <b>Promocja</b>\n"
+        f"{promo}\n\n"
 
         f"📦 {order[4]}\n\n"
 

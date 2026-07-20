@@ -44,6 +44,12 @@ try:
 except:
     pass
 
+try:
+    cursor.execute("ALTER TABLE orders ADD COLUMN promo INTEGER DEFAULT 0")
+    db.commit()
+except:
+    pass
+
 # ==========================================
 # UŻYTKOWNICY
 # ==========================================
@@ -148,7 +154,8 @@ def add_order(
     full_name,
     products,
     place,
-    order_time
+    order_time,
+    promo
 ):
 
     cursor.execute(
@@ -159,9 +166,10 @@ def add_order(
             full_name,
             products,
             place,
-            order_time
+            order_time,
+            promo
         )
-        VALUES(?,?,?,?,?,?)
+        VALUES(?,?,?,?,?,?,?)
         """,
         (
             user_id,
@@ -169,7 +177,8 @@ def add_order(
             full_name,
             products,
             place,
-            order_time
+            order_time,
+            int(promo)
         )
     )
 
