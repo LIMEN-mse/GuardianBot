@@ -16,7 +16,8 @@ from database import (
     add_order,
     set_admin_message,
     update_order_status,
-    get_order
+    get_order,
+    format_order_number
 )
 
 from keyboards import order_admin_keyboard
@@ -243,11 +244,13 @@ async def confirm_order(
         order_time=data["order_time"]
     )
 
+    number = format_order_number(order_id)
+
     admin_msg = await callback.bot.send_message(
         chat_id=ADMIN_CHAT,
 
         text=(
-            f"🆕 <b>ZAMÓWIENIE #{order_id:04d}</b>\n\n"
+            f"🆕 <b>ZAMÓWIENIE {number}</b>\n\n"
 
             f"👤 <b>Klient</b>\n"
             f"{callback.from_user.full_name}\n"
@@ -272,17 +275,17 @@ async def confirm_order(
         reply_markup=order_admin_keyboard(order_id)
     )
 
-    set_admin_message(
-        order_id,
-        admin_msg.message_id
-    )
+ set_admin_message(
+    order_id,
+    admin_msg.message_id
+ )
 
     await callback.message.edit_text(
 
         "✅ <b>Zamówienie zostało przyjęte.</b>\n\n"
 
         f"📦 Numer zamówienia:\n"
-        f"<code>#{order_id:04d}</code>\n\n"
+        f"<code>{number}</code>\n\n"
 
         "Administracja została powiadomiona.\n"
         "O zmianie statusu otrzymasz wiadomość.",
@@ -311,8 +314,9 @@ async def change_status(
 
     order = get_order(order_id)
 
-    print("ORDER:", order)
+    number = format_order_number(order_id)
 
+    print("ORDER:", order)
     if not order:
         await callback.answer("Nie znaleziono zamówienia.")
         return
@@ -325,7 +329,7 @@ async def change_status(
     order_time = order[6]
 
     text = (
-        f"🆕 <b>ZAMÓWIENIE #{order_id:04d}</b>\n\n"
+        f"🆕 <b>ZAMÓWIENIE {number}</b>\n\n"
 
         f"👤 <b>Klient</b>\n"
         f"{full_name}\n"
@@ -354,7 +358,7 @@ async def change_status(
     try:
         await callback.bot.send_message(
             user_id,
-            f"📦 Zamówienie <b>#{order_id:04d}</b>\n\n"
+            f"📦 Zamówienie <b>{number}</b>\n\n"
             f"Status:\n"
             f"{emoji} <b>{status}</b>",
             parse_mode="HTML"
@@ -410,7 +414,7 @@ async def my_orders(message: Message):
             emoji = "❌"
 
         text += (
-            f"<b>#{order_id:04d}</b>\n"
+            f"<b>{format_order_number(order_id)}</b>\n"
             f"{emoji} {status}\n"
             f"📍 {place}\n"
             f"🕒 {hour}\n"

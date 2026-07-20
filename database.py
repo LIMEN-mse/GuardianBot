@@ -250,3 +250,8 @@ def set_admin_message(order_id, message_id):
     )
 
     db.commit()
+
+
+def format_order_number(order_id):
+
+    return f"LMN-{order_id:04d}"
