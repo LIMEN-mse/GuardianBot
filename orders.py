@@ -275,10 +275,10 @@ async def confirm_order(
         reply_markup=order_admin_keyboard(order_id)
     )
 
- set_admin_message(
-    order_id,
-    admin_msg.message_id
- )
+    set_admin_message(
+        order_id,
+        admin_msg.message_id
+    )
 
     await callback.message.edit_text(
 
@@ -358,7 +358,7 @@ async def change_status(
     try:
         await callback.bot.send_message(
             user_id,
-            f"📦 Zamówienie <b>{number}</b>\n\n"
+            f"📦 Zamówienie <b>#{number}</b>\n\n"
             f"Status:\n"
             f"{emoji} <b>{status}</b>",
             parse_mode="HTML"
