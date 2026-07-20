@@ -10,7 +10,6 @@ cursor = db.cursor()
 
 def create_tables():
 
-    # użytkownicy
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users(
         user_id INTEGER PRIMARY KEY,
@@ -19,7 +18,6 @@ def create_tables():
     )
     """)
 
-    # zamówienia
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS orders(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,30 +41,37 @@ def create_tables():
 # ==========================================
 
 def add_user(user_id):
+
     cursor.execute(
         "INSERT OR IGNORE INTO users(user_id) VALUES(?)",
         (user_id,)
     )
+
     db.commit()
 
 
 def verify_user(user_id):
+
     cursor.execute(
         "UPDATE users SET verified=1 WHERE user_id=?",
         (user_id,)
     )
+
     db.commit()
 
 
 def accept_rules(user_id):
+
     cursor.execute(
         "UPDATE users SET accepted_rules=1 WHERE user_id=?",
         (user_id,)
     )
+
     db.commit()
 
 
 def is_verified(user_id):
+
     cursor.execute(
         "SELECT verified FROM users WHERE user_id=?",
         (user_id,)
@@ -78,6 +83,7 @@ def is_verified(user_id):
 
 
 def rules_accepted(user_id):
+
     cursor.execute(
         "SELECT accepted_rules FROM users WHERE user_id=?",
         (user_id,)
@@ -89,143 +95,44 @@ def rules_accepted(user_id):
 
 
 def get_total_users():
+
     cursor.execute(
         "SELECT COUNT(*) FROM users"
     )
+
     return cursor.fetchone()[0]
 
 
 def get_verified_users():
+
     cursor.execute(
         "SELECT COUNT(*) FROM users WHERE verified=1"
     )
+
     return cursor.fetchone()[0]
 
 
 def get_rules_users():
+
     cursor.execute(
         "SELECT COUNT(*) FROM users WHERE accepted_rules=1"
     )
+
     return cursor.fetchone()[0]
 
 
 def get_all_users():
+
     cursor.execute(
         "SELECT user_id, verified, accepted_rules FROM users"
     )
+
     return cursor.fetchall()
 
 
 # ==========================================
 # ZAMÓWIENIA
 # ==========================================
-
-def add_order(
-    user_id,
-    username,
-    fullname,
-    products,
-    place,
-    order_time
-):
-
-    cursor.execute(
-        """
-        INSERT INTO orders(
-            user_id,
-            username,
-            fullname,
-            products,
-            place,
-            order_time
-        )
-        VALUES(?,?,?,?,?,?)
-        """,
-        (
-            user_id,
-            username,
-            fullname,
-            products,
-            place,
-            order_time
-        )
-    )
-
-    db.commit()
-
-    return cursor.lastrowid
-
-
-def get_order(order_id):
-
-    cursor.execute(
-        """
-        SELECT
-            id,
-            user_id,
-            username,
-            fullname,
-            products,
-            place,
-            order_time,
-            status,
-            admin_message_id,
-            created_at
-        FROM orders
-        WHERE id=?
-        """,
-        (order_id,)
-    )
-
-    return cursor.fetchone()
-
-
-def set_status(order_id, status):
-
-    cursor.execute(
-        """
-        UPDATE orders
-        SET status=?
-        WHERE id=?
-        """,
-        (
-            status,
-            order_id
-        )
-    )
-
-    db.commit()
-
-
-def set_admin_message(order_id, message_id):
-
-    cursor.execute(
-        """
-        UPDATE orders
-        SET admin_message_id=?
-        WHERE id=?
-        """,
-        (
-            message_id,
-            order_id
-        )
-    )
-
-    db.commit()
-
-
-def get_all_orders():
-
-    cursor.execute(
-        """
-        SELECT *
-        FROM orders
-        ORDER BY id DESC
-        """
-    )
-
-    return cursor.fetchall()
-
 
 def add_order(
     user_id,
@@ -266,38 +173,28 @@ def add_order(
 def get_order(order_id):
 
     cursor.execute(
-        "SELECT * FROM orders WHERE id=?",
+        """
+        SELECT *
+        FROM orders
+        WHERE id=?
+        """,
         (order_id,)
     )
 
     return cursor.fetchone()
 
 
-def update_order_status(order_id, status):
-
-    cursor.execute(
-        "UPDATE orders SET status=? WHERE id=?",
-        (status, order_id)
-    )
-
-    db.commit()
-
-
-def set_admin_message(order_id, message_id):
+def get_all_orders():
 
     cursor.execute(
         """
-        UPDATE orders
-        SET admin_message_id=?
-        WHERE id=?
-        """,
-        (
-            message_id,
-            order_id
-        )
+        SELECT *
+        FROM orders
+        ORDER BY id DESC
+        """
     )
 
-    db.commit()
+    return cursor.fetchall()
 
 
 def get_user_orders(user_id):
@@ -319,3 +216,37 @@ def get_user_orders(user_id):
     )
 
     return cursor.fetchall()
+
+
+def update_order_status(order_id, status):
+
+    cursor.execute(
+        """
+        UPDATE orders
+        SET status=?
+        WHERE id=?
+        """,
+        (
+            status,
+            order_id
+        )
+    )
+
+    db.commit()
+
+
+def set_admin_message(order_id, message_id):
+
+    cursor.execute(
+        """
+        UPDATE orders
+        SET admin_message_id=?
+        WHERE id=?
+        """,
+        (
+            message_id,
+            order_id
+        )
+    )
+
+    db.commit()

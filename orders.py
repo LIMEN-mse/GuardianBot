@@ -305,21 +305,16 @@ async def change_status(
     emoji: str
 ):
 
-    order_id = int(
-        callback.data.split("_")[1]
-    )
+    order_id = int(callback.data.split("_")[1])
 
-    update_order_status(
-        order_id,
-        status
-    )
+    update_order_status(order_id, status)
 
     order = get_order(order_id)
 
+    print("ORDER:", order)
+
     if not order:
-        await callback.answer(
-            "Nie znaleziono zamówienia."
-        )
+        await callback.answer("Nie znaleziono zamówienia.")
         return
 
     user_id = order[1]
@@ -368,46 +363,6 @@ async def change_status(
         print(e)
 
     await callback.answer()
-
-
-@router.callback_query(F.data.startswith("accepted_"))
-async def accepted(callback: CallbackQuery):
-
-    await change_status(
-        callback,
-        "PRZYJĘTE",
-        "🟢"
-    )
-
-
-@router.callback_query(F.data.startswith("progress_"))
-async def progress(callback: CallbackQuery):
-
-    await change_status(
-        callback,
-        "W REALIZACJI",
-        "🚗"
-    )
-
-
-@router.callback_query(F.data.startswith("ready_"))
-async def ready(callback: CallbackQuery):
-
-    await change_status(
-        callback,
-        "GOTOWE",
-        "📦"
-    )
-
-
-@router.callback_query(F.data.startswith("cancel_"))
-async def rejected(callback: CallbackQuery):
-
-    await change_status(
-        callback,
-        "ODRZUCONE",
-        "❌"
-    )
 
 
 # =====================================
