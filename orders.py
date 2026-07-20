@@ -161,23 +161,23 @@ async def order_time(
     state: FSMContext
 ):
 
-    match = re.fullmatch(r"(\d{1,2}):(\d{2})", message.text.strip())
+    text = message.text.strip()
+
+    # Jeśli użytkownik poda tylko godzinę, np. "14"
+    if ":" not in text:
+        text += ":00"
+
+    match = re.fullmatch(r"(\d{1,2}):(\d{2})", text)
 
     if not match:
-        await message.answer(
-            "❌ Podaj godzinę w formacie <code>18:30</code>.",
-            parse_mode="HTML"
-        )
+        await message.answer("❌ Niepoprawna godzina.")
         return
 
     hour = int(match.group(1))
     minute = int(match.group(2))
 
     if minute > 59:
-        await message.answer(
-            "❌ Niepoprawna godzina.",
-            parse_mode="HTML"
-        )
+        await message.answer("❌ Niepoprawna godzina.")
         return
 
     # Dozwolone godziny: 08:00–22:00
@@ -189,7 +189,7 @@ async def order_time(
         return
 
     await state.update_data(
-        order_time=message.text
+        order_time=text
     )
 
     data = await state.get_data()
@@ -232,7 +232,7 @@ async def order_time(
         f"{place}\n\n"
 
         f"🕒 <b>Godzina</b>\n"
-        f"{data['order_time']}\n\n"
+        f"{text}\n\n"
 
         "Czy wszystko się zgadza?",
 
@@ -240,7 +240,6 @@ async def order_time(
 
         reply_markup=keyboard
     )
-
 
 # =====================================
 # POTWIERDZENIE ZAMÓWIENIA
