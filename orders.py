@@ -10,6 +10,7 @@ from aiogram.types import (
 )
 from aiogram.fsm.context import FSMContext
 
+from database import add_user
 from config import ADMIN_CHAT
 from states import OrderState
 from keyboards import order_admin_keyboard
@@ -24,8 +25,9 @@ from database import (
     set_order_price,
     get_order_price,
     get_orders_count,
-     get_promo_orders,
-    increase_promo_orders
+    get_promo_orders,
+    increase_promo_orders,
+    user_exists
 )
 
 router = Router()
@@ -278,7 +280,8 @@ async def order_time(
     OrderState.waiting_for_confirmation,
     F.data == "confirm_order"
 )
-from database import add_user
+
+
 async def confirm_order(
     callback: CallbackQuery,
     state: FSMContext
@@ -300,6 +303,11 @@ async def confirm_order(
         username = "Brak"
 
     add_user(callback.from_user.id)
+
+    print("PRZED:", user_exists(callback.from_user.id))
+
+
+    print("PO:", user_exists(callback.from_user.id))
 
     order_id = add_order(
         user_id=callback.from_user.id,
