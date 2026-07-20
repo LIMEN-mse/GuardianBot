@@ -72,7 +72,7 @@ async def start_order(message: Message, state: FSMContext):
 
         "🛒 <b>Składanie zamówienia</b>\n\n"
 
-        "📜 Korzystając z bota akceptujesz <b>regulamin</b>
+        "📜 Korzystając z bota akceptujesz <b>(/regulamin)</b>\n\n"
 
         + promo +
 
@@ -564,5 +564,36 @@ async def my_orders(message: Message):
 
     await message.answer(
         text,
+        parse_mode="HTML"
+    )
+
+
+# =====================================
+# REGULAMIN
+# =====================================
+
+@router.message(Command("regulamin"))
+async def regulamin(message: Message):
+
+    await message.answer(
+
+        "📜 <b>REGULAMIN</b>\n\n"
+
+        "1️⃣ Bot służy do składania zamówień.\n\n"
+
+        "2️⃣ Zamówienia realizowane są wyłącznie w godzinach <b>08:00–22:00</b>.\n\n"
+
+        "3️⃣ Płatność odbywa się wyłącznie <b>gotówką przy odbiorze</b>.\n\n"
+
+        "4️⃣ Klient zobowiązany jest pojawić się punktualnie w miejscu odbioru. Zalecamy przybycie około 5 minut wcześniej.\n\n"
+
+        "5️⃣ Nieodebranie zamówienia bez wcześniejszej informacji może skutkować odmową realizacji kolejnych zamówień lub blokadą korzystania z bota.\n\n"
+
+        "6️⃣ Promocja dla nowych klientów obowiązuje wyłącznie podczas pierwszych <b>3 zamówień</b>.\n\n"
+
+        "7️⃣ Administrator świadczy usługę organizacji realizacji zamówień. Nie jest producentem oferowanych produktów i nie ponosi odpowiedzialności za ich jakość, wady ani sposób użytkowania po odbiorze przez klienta.\n\n"
+
+        "8️⃣ Złożenie zamówienia oznacza akceptację niniejszego regulaminu.",
+
         parse_mode="HTML"
     )
