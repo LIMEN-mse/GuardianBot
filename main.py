@@ -10,6 +10,10 @@ from orders import router as orders_router
 from admin import router as admin_router
 from admin_orders import router as admin_orders_router
 
+from config import DATABASE_URL
+
+print("TOKEN:", TOKEN is not None)
+print("DATABASE_URL:", DATABASE_URL)
 
 bot = Bot(TOKEN)
 dp = Dispatcher()

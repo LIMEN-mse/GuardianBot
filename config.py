@@ -1,4 +1,8 @@
-TOKEN = "8866573034:AAFRujkp1wr8i_aEu5-w6Mu_KTKeEGd2JiI"
+import os
+
+TOKEN = os.getenv("BOT_TOKEN")
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 BOT_USERNAME = "STARTlimen_bot"
 
 VERIFY_TIME = 300
