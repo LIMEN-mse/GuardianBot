@@ -50,6 +50,8 @@ async def start_order(message: Message, state: FSMContext):
 
     orders = get_promo_orders(message.from_user.id)
 
+    print(f"PROMO ORDERS = {orders}")
+
     await state.set_state(OrderState.waiting_for_products)
 
     promo = ""
@@ -308,6 +310,9 @@ async def confirm_order(
 
     if data["promo"]:
         increase_promo_orders(callback.from_user.id)
+    
+    print("Zwiększono licznik promocji")
+    print(get_promo_orders(callback.from_user.id))
 
     number = format_order_number(order_id)
 
