@@ -304,10 +304,6 @@ async def confirm_order(
 
     add_user(callback.from_user.id)
 
-    print("PRZED:", user_exists(callback.from_user.id))
-
-
-    print("PO:", user_exists(callback.from_user.id))
 
     order_id = add_order(
         user_id=callback.from_user.id,
@@ -322,8 +318,6 @@ async def confirm_order(
     if data["promo"]:
         increase_promo_orders(callback.from_user.id)
     
-    print("Zwiększono licznik promocji")
-    print(get_promo_orders(callback.from_user.id))
 
     number = format_order_number(order_id)
 
@@ -618,3 +612,6 @@ async def regulamin(message: Message):
 
         parse_mode="HTML"
     )
+
+
+print
