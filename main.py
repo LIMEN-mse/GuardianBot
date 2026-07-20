@@ -1,12 +1,15 @@
 import asyncio
 
-from orders import router as orders_router
 from aiogram import Bot, Dispatcher
-from admin import router as admin_router
-from config import TOKEN, ADMIN_CHAT
-from handlers import router
+
+from config import TOKEN
 from database import create_tables
+
+from handlers import router
+from orders import router as orders_router
+from admin import router as admin_router
 from admin_orders import router as admin_orders_router
+
 
 bot = Bot(TOKEN)
 dp = Dispatcher()
@@ -16,6 +19,7 @@ dp.include_router(admin_orders_router)
 dp.include_router(router)
 dp.include_router(admin_router)
 
+
 async def main():
     create_tables()
 
@@ -23,6 +27,9 @@ async def main():
 
     me = await bot.get_me()
     print(f"✅ Zalogowano jako @{me.username}")
+
+    # Usunięcie webhooka (Render zostawia go aktywnego)
+    await bot.delete_webhook(drop_pending_updates=True)
 
     await dp.start_polling(
         bot,

@@ -14,7 +14,8 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS users(
         user_id INTEGER PRIMARY KEY,
         verified INTEGER DEFAULT 0,
-        accepted_rules INTEGER DEFAULT 0
+        accepted_rules INTEGER DEFAULT 0,
+        started INTEGER DEFAULT 0
     )
     """)
 
@@ -255,3 +256,36 @@ def set_admin_message(order_id, message_id):
 def format_order_number(order_id):
 
     return f"LMN-{order_id:04d}"
+
+
+def has_started(user_id):
+
+    cursor.execute(
+        """
+        SELECT started
+        FROM users
+        WHERE user_id=?
+        """,
+        (user_id,)
+    )
+
+    row = cursor.fetchone()
+
+    if not row:
+        return False
+
+    return bool(row[0])
+
+
+def set_started(user_id):
+
+    cursor.execute(
+        """
+        UPDATE users
+        SET started=1
+        WHERE user_id=?
+        """,
+        (user_id,)
+    )
+
+    db.commit()

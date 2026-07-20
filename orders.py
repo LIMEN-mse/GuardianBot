@@ -8,19 +8,18 @@ from aiogram.types import (
 )
 from aiogram.fsm.context import FSMContext
 
-from database import get_user_orders
-from states import OrderState
 from config import ADMIN_CHAT
+from states import OrderState
+from keyboards import order_admin_keyboard
 
 from database import (
+    get_user_orders,
     add_order,
     set_admin_message,
     update_order_status,
     get_order,
     format_order_number
 )
-
-from keyboards import order_admin_keyboard
 
 router = Router()
 

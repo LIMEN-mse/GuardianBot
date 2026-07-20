@@ -2,7 +2,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import BOT_USERNAME
 
 from aiogram import Router, F
-from aiogram.filters import Command
+from aiogram.filters import Command, CommandStart
 from aiogram.types import (
     Message,
     CallbackQuery,
@@ -24,7 +24,10 @@ from verification import (
 from database import (
     get_total_users,
     get_verified_users,
-    get_rules_users
+    get_rules_users,
+    add_user,
+    has_started,
+    set_started
 )
 
 router = Router()
@@ -39,14 +42,50 @@ ADMINS = [
 # START
 # ===========================
 
-@router.message(Command("start"))
-async def start(message: Message):
-    await message.answer(
-        "🛡️ Witaj!\n\n"
-        "Aby uzyskać dostęp do grupy, musisz przejść krótką weryfikację.",
-        reply_markup=start_keyboard
-    )
+# =====================================
+# START
+# =====================================
 
+@router.message(CommandStart())
+async def start(message: Message):
+
+    add_user(message.from_user.id)
+
+    if not has_started(message.from_user.id):
+
+        await message.answer(
+            "👋 <b>Cześć!</b>\n\n"
+
+            "Widzę, że korzystasz z bota pierwszy raz.\n\n"
+
+            "📦 Aby złożyć zamówienie wpisz:\n"
+            "<code>/zamow</code>\n\n"
+
+            "Podczas zamówienia podajesz:\n"
+            "• produkty,\n"
+            "• miejsce odbioru,\n"
+            "• godzinę odbioru.\n\n"
+
+            "💰 <b>Orientacyjny cennik</b>\n"
+            "⚡ Energetyk — <b>10 zł</b>\n"
+            "🚬 Papierosy klasyczne — <b>40 zł</b>\n"
+            "⚠️ Papierosy elektroniczne są wyceniane indywidualnie.\n\n"
+
+            "📋 Status swoich zamówień sprawdzisz komendą:\n"
+            "<code>/moje</code>",
+
+            parse_mode="HTML"
+        )
+
+        set_started(message.from_user.id)
+
+    else:
+
+        await message.answer(
+            "👋 Witaj ponownie!\n\n"
+            "📦 /zamow — złóż zamówienie\n"
+            "📋 /moje — sprawdź swoje zamówienia"
+        )
 
 # ===========================
 # WYŚWIETL SWOJE ID
